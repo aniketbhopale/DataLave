@@ -37,6 +37,14 @@ def Outliers(df,feature,methods1, submethods1, k):
 
     return df2
 
+def Encode(df,feature, mapping_dict):
+    df3 = df.copy()
+    df3[feature] = df3[feature].map(mapping_dict)
+    return df3
+
+
+
+
 st.set_page_config(layout="wide")
 
 st.title("DataLave")
@@ -45,11 +53,12 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 
 st.sidebar.subheader('Select Work to perform')
-work = st.sidebar.radio('Select Work to perform', ["Main Menu", "1.Fill and Clean Nulls", "2.Outlier Management", "3.Encode & Scale"])
+work = st.sidebar.radio('Select Work to perform', ["Main Menu", "1.Fill and Clean Nulls", "2.Outlier Management", "3.Encoding"])
 
 methods = ['dropnulls_method', 'mean_method', 'median_method', 'min_method', 'max_method']
 methods1 = ['Z-score', 'IQR score']
 submethods1 =['Records Above +3σ and below -3σ', 'Records Above +2σ and below -2σ', 'Records Above +1σ and below -1σ']
+methods2 = ['Encode randomly', 'Encode in manual Order']
 
 file = st.file_uploader('Upload your csv file', type='csv')
 
@@ -127,5 +136,44 @@ if work == '2.Outlier Management':
                     st.session_state.show_prev = False
                     st.success('Your changes have been saved.')
                     st.rerun()
+
+if work == '3.Encoding':
+    if file and st.session_state.df is not None:
+        feature = st.selectbox('Select your feature', st.session_state.df.columns)
+        val_counts = st.session_state.df[feature].value_counts(dropna=False)
+        unique_count = len(val_counts)
+        total_records = len(st.session_state.df)
+        st.write(f'Category breakdown for **{feature}**')
+        st.dataframe(st.session_state.df[feature].value_counts(dropna=False))
+        st.write(f'There are **{unique_count}** unique values in **{feature}** having **{total_records}** records.')
+        methods2 = st.selectbox('Select how you want to encode', methods2)
+
+        mapping_dict = {}
+        unique_categories = val_counts.index.tolist()
+
+        if methods2 == 'Encode randomly':
+            for idx , cat in enumerate(unique_categories):
+                mapping_dict[cat] = idx
+
+            mapping_display = pd.DataFrame(list(mapping_dict.items()), columns=['Categories', 'Assigned_Values'])
+            st.write('Data has been Encoded')
+            st.dataframe(mapping_display)
+
+        elif methods2 == 'Encode in manual Order':
+            grid_cols = st.columns(2)
+            for idx , cat in enumerate(unique_categories):
+                col_target = grid_cols[idx%2]
+                cat_label = 'NaN (missing values)' if pd.isnull(cat) else str(cat)
+                assigned_val = col_target.number_input(f'{cat_label}', value=idx, min_value=0, max_value=unique_count - 1, key=f'manual_enc_{feature}_{idx}')
+                mapping_dict[cat] = assigned_val
+
+        if st.button('Apply Changes'):
+            st.session_state.df = Encode(st.session_state.df,feature,mapping_dict)
+            st.success(f'Feature {feature} has been encoded.')
+            st.rerun()
+
+    st.caption('Current Dataset Version:')
+    st.dataframe(st.session_state.df)
+    st.caption(st.session_state.df.shape)
 
 
