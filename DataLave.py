@@ -5,23 +5,25 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib as mpl
 
-
 mpl.rcParams['figure.dpi'] = 300
 mpl.rcParams['savefig.dpi'] = 300
 
 st.set_page_config(page_title="DataLave", layout="wide")
+
 
 # css load
 def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+
 try:
     load_css("assets/style.css")
 except FileNotFoundError:
     pass
 
-def clean_data(df,feature,method):
+
+def clean_data(df, feature, method):
     df1 = df.copy()
     if method == 'dropnulls_method':
         df1 = df1.dropna(subset=[feature])
@@ -36,11 +38,12 @@ def clean_data(df,feature,method):
 
     return df1
 
-def Outliers(df,feature,methods1, submethods1, k):
+
+def Outliers(df, feature, methods1, submethods1, k):
     df2 = df.copy()
     if methods1 == 'Z-score':
         if submethods1 == 'Records Above +3σ and below -3σ':
-            df2 = df2[((df2[feature] - df2[feature].mean()) / (df2[feature].std())).between(-3,3)]
+            df2 = df2[((df2[feature] - df2[feature].mean()) / (df2[feature].std())).between(-3, 3)]
         elif submethods1 == 'Records Above +2σ and below -2σ':
             df2 = df2[((df2[feature] - df2[feature].mean()) / (df2[feature].std())).between(-2, 2)]
         elif submethods1 == 'Records Above +1σ and below -1σ':
@@ -50,11 +53,12 @@ def Outliers(df,feature,methods1, submethods1, k):
         q1 = df2[feature].quantile(0.25)
         q3 = df2[feature].quantile(0.75)
         IQR = q3 - q1
-        min_range = q1 - (k*IQR)
-        max_range = q3 + (k*IQR)
+        min_range = q1 - (k * IQR)
+        max_range = q3 + (k * IQR)
         df2 = df2[df2[feature].between(min_range, max_range)]
 
     return df2
+
 
 def plot_outlier_distribution(df, feature, is_outlier_mask=None, is_preview=True):
     fig, (ax_box, ax_hist) = plt.subplots(
@@ -79,9 +83,11 @@ def plot_outlier_distribution(df, feature, is_outlier_mask=None, is_preview=True
 
         # Bottom: Histogram with unified bin edges
         shared_bins = np.linspace(df[feature].min(), df[feature].max(), 45)
-        sns.histplot(kept_vals, bins=shared_bins, ax=ax_hist, color="#1976d2", label=f'Kept ({len(kept_vals)})', kde=True)
+        sns.histplot(kept_vals, bins=shared_bins, ax=ax_hist, color="#1976d2", label=f'Kept ({len(kept_vals)})',
+                     kde=True)
         if len(removed_vals) > 0:
-            sns.histplot(removed_vals, bins=shared_bins, ax=ax_hist, color="#e53935", label=f'Outliers Removed ({len(removed_vals)})', kde=False)
+            sns.histplot(removed_vals, bins=shared_bins, ax=ax_hist, color="#e53935",
+                         label=f'Outliers Removed ({len(removed_vals)})', kde=False)
 
         ax_hist.legend(loc='upper right')
         ax_box.set_title(f"Preview Distribution: '{feature}'", fontsize=11, fontweight='bold')
@@ -96,15 +102,12 @@ def plot_outlier_distribution(df, feature, is_outlier_mask=None, is_preview=True
     plt.tight_layout()
     return fig
 
-def Encode(df,feature, mapping_dict):
+
+def Encode(df, feature, mapping_dict):
     df3 = df.copy()
     df3[feature] = df3[feature].map(mapping_dict)
     return df3
 
-
-
-
-st.set_page_config(layout="wide")
 
 st.title("DataLave")
 
@@ -112,11 +115,12 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 
 st.sidebar.subheader('Select Work to perform')
-work = st.sidebar.radio('Select Work to perform', ["Main Menu", "1.Fill and Clean Nulls", "2.Outlier Management", "3.Encoding"])
+work = st.sidebar.radio('Select Work to perform',
+                        ["Main Menu", "1.Fill and Clean Nulls", "2.Outlier Management", "3.Encoding"])
 
 methods = ['dropnulls_method', 'mean_method', 'median_method', 'min_method', 'max_method']
 methods1 = ['Z-score', 'IQR score']
-submethods1 =['Records Above +3σ and below -3σ', 'Records Above +2σ and below -2σ', 'Records Above +1σ and below -1σ']
+submethods1 = ['Records Above +3σ and below -3σ', 'Records Above +2σ and below -2σ', 'Records Above +1σ and below -1σ']
 methods2 = ['Encode randomly', 'Encode in manual Order']
 
 file = st.file_uploader('Upload your csv file', type='csv')
@@ -134,21 +138,20 @@ if work == 'Main Menu':
         total_nulls = int(current_df.isna().sum().sum())
         null_percentage = (total_nulls / total_cells * 100) if total_cells > 0 else 0.0
         total_duplicates = int(current_df.duplicated().sum())
-        memory_bytes = current_df.memory_usage(deep=True).sum()
-        memory_mb = memory_bytes / (1024 * 1024)
+        numeric_count = len(current_df.select_dtypes(include=np.number).columns)
 
-        # 1. Dataset Vitals Ribbon
+        # 1. Dataset info
         st.subheader("Dataset Info")
         kpi1, kpi2, kpi3, kpi4 = st.columns(4)
         kpi1.metric("Dimensions", f"{total_rows:,} × {total_cols:,}", help="Total Rows × Total Columns")
         kpi2.metric("Missing Cells", f"{null_percentage:.2f}%", f"{total_nulls:,} nulls", delta_color="inverse")
         kpi3.metric("Duplicate Rows", f"{total_duplicates:,}", help="Exact identical rows")
-        kpi4.metric("Memory Footprint", f"{memory_mb:.2f} MB", help="Deep in-memory consumption")
+        kpi4.metric("Numeric Columns", f"{numeric_count:,}", help="Total features available for stats & outliers")
 
         st.markdown("---")
 
-        # 2. Schema & Column Health Audit
-        st.subheader("Column Description & Cardinality")
+        # 2. Columns Info
+        st.subheader("Columns Description")
         audit_rows = []
         for col in current_df.columns:
             col_series = current_df[col]
@@ -173,7 +176,7 @@ if work == 'Main Menu':
 
         st.markdown("---")
 
-        # 3. Missingness Audit Chart
+        # 3. Missingness chart
         null_counts = current_df.isna().sum()
         cols_with_nulls = null_counts[null_counts > 0].sort_values(ascending=True)
 
@@ -196,7 +199,7 @@ if work == 'Main Menu':
             st.pyplot(fig_null, use_container_width=True, dpi=300)
             plt.close(fig_null)
 
-        # 4. Distribution & Outlier Inspector (KDE + Boxplot)
+        # 4. Distributions & Outliers
         numeric_cols = current_df.select_dtypes(include=np.number).columns.tolist()
         if numeric_cols:
             st.subheader("Numeric Distribution & Outliers")
@@ -217,12 +220,13 @@ if work == 'Main Menu':
                 st.pyplot(fig_dist, use_container_width=True, dpi=300)
                 plt.close(fig_dist)
 
-        # 5. Correlation Matrix (Multicollinearity Check)
+        # 5. Correlation Matrix
         if len(numeric_cols) > 1:
             st.subheader("Feature Collinearity (Pearson Correlation)")
             corr_matrix = current_df[numeric_cols].corr()
 
-            fig_corr, ax_corr = plt.subplots(figsize=(min(10, len(numeric_cols) * 1.2), min(8, len(numeric_cols) * 0.9)))
+            fig_corr, ax_corr = plt.subplots(
+                figsize=(min(10, len(numeric_cols) * 1.2), min(8, len(numeric_cols) * 0.9)))
             sns.heatmap(
                 corr_matrix,
                 annot=True,
@@ -242,6 +246,7 @@ if work == 'Main Menu':
         if cat_cols:
             st.subheader("Categorical Feature Balancer")
             selected_cat = st.selectbox("Select categorical feature:", cat_cols, key="main_menu_cat_select")
+
             top_n = current_df[selected_cat].value_counts(dropna=False).head(10)
 
             fig_cat, ax_cat = plt.subplots(figsize=(8, max(2.5, len(top_n) * 0.4)))
@@ -261,17 +266,19 @@ if work == '1.Fill and Clean Nulls':
     if file and st.session_state.df is None:
         st.session_state.df = pd.read_csv(file)
 
-    if file:
+    if st.session_state.df is not None:
         feature = st.selectbox('Select your feature', st.session_state.df.columns)
         method = st.selectbox('Select your method', methods)
 
         if st.button('Apply Changes'):
-          st.session_state.df = clean_data(st.session_state.df,feature,method)
-          st.success('Your changes have been saved.')
+            st.session_state.df = clean_data(st.session_state.df, feature, method)
+            st.success('Your changes have been saved.')
 
-    st.caption('Current Dataset:')
-    st.dataframe(st.session_state.df)
-    st.caption(st.session_state.df.shape)
+        st.caption('Current Dataset:')
+        st.dataframe(st.session_state.df)
+        st.caption(st.session_state.df.shape)
+    else:
+        st.info("Upload a CSV file.")
 
 elif work == '2.Outlier Management':
     if file and st.session_state.df is not None:
@@ -327,7 +334,8 @@ elif work == '2.Outlier Management':
             removed_count = int(outlier_mask.sum())
             kept_count = original_rows - removed_count
 
-            st.info(f"Keeping **{kept_count:,}** out of **{original_rows:,}** records (Filtered **{removed_count:,}** outliers).")
+            st.info(
+                f"Keeping **{kept_count:,}** out of **{original_rows:,}** records (Filtered **{removed_count:,}** outliers).")
 
             if st.button('Apply Changes'):
                 filtered_df = st.session_state.df[~outlier_mask].copy()
@@ -339,6 +347,8 @@ elif work == '2.Outlier Management':
             st.caption('Current Dataset Version:')
             st.dataframe(st.session_state.df, use_container_width=True)
             st.caption(f"Shape: {st.session_state.df.shape}")
+    else:
+        st.info("Upload a CSV file.")
 
 if work == '3.Encoding':
     if file and st.session_state.df is not None:
@@ -355,7 +365,7 @@ if work == '3.Encoding':
         unique_categories = val_counts.index.tolist()
 
         if methods2 == 'Encode randomly':
-            for idx , cat in enumerate(unique_categories):
+            for idx, cat in enumerate(unique_categories):
                 mapping_dict[cat] = idx
 
             mapping_display = pd.DataFrame(list(mapping_dict.items()), columns=['Categories', 'Assigned_Values'])
@@ -364,17 +374,20 @@ if work == '3.Encoding':
 
         elif methods2 == 'Encode in manual Order':
             grid_cols = st.columns(2)
-            for idx , cat in enumerate(unique_categories):
-                col_target = grid_cols[idx%2]
+            for idx, cat in enumerate(unique_categories):
+                col_target = grid_cols[idx % 2]
                 cat_label = 'NaN (missing values)' if pd.isnull(cat) else str(cat)
-                assigned_val = col_target.number_input(f'{cat_label}', value=idx, min_value=0, max_value=unique_count - 1, key=f'manual_enc_{feature}_{idx}')
+                assigned_val = col_target.number_input(f'{cat_label}', value=idx, min_value=0,
+                                                       max_value=unique_count - 1, key=f'manual_enc_{feature}_{idx}')
                 mapping_dict[cat] = assigned_val
 
         if st.button('Apply Changes'):
-            st.session_state.df = Encode(st.session_state.df,feature,mapping_dict)
+            st.session_state.df = Encode(st.session_state.df, feature, mapping_dict)
             st.success(f'Feature {feature} has been encoded.')
             st.rerun()
 
-    st.caption('Current Dataset Version:')
-    st.dataframe(st.session_state.df)
-    st.caption(st.session_state.df.shape)
+        st.caption('Current Dataset Version:')
+        st.dataframe(st.session_state.df)
+        st.caption(st.session_state.df.shape)
+    else:
+        st.info("Upload a CSV file.")
