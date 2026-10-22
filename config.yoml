@@ -1,0 +1,9 @@
+[theme]
+primaryColor = "#2563EB"      		   # blue
+backgroundColor = "#F8FAFC"                # off white
+secondaryBackgroundColor = "#FFFFFF"       # white cards
+textColor = "#0F172A"                 	   # Deep slate
+font = "sans serif"
+
+[client]
+toolbarMode = "minimal"

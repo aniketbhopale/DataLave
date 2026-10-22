@@ -1,0 +1,54 @@
+/* Clean system font rendering */
+html, body, [class*="css"] {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Reduce top blank header padding */
+.block-container {
+    padding-top: 1.8rem;
+    padding-bottom: 2rem;
+    max-width: 95%;
+}
+
+/* Modern, minimalist KPI metric cards */
+div[data-testid="stMetric"] {
+    background-color: #FFFFFF;
+    border: 1px solid #E2E8F0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+div[data-testid="stMetricLabel"] {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+div[data-testid="stMetricValue"] {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+/* Polish dataframes and tables */
+div[data-testid="stDataFrame"] {
+    border: 1px solid #E2E8F0;
+    border-radius: 6px;
+    background-color: #FFFFFF;
+}
+
+/* Primary buttons: crisp, fast, non-distracting */
+button[kind="primary"] {
+    background-color: #2563EB;
+    border-radius: 6px;
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.15s ease;
+}
+
+button[kind="primary"]:hover {
+    background-color: #1D4ED8;
+}
