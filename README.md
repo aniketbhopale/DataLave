@@ -11,19 +11,18 @@ DataLave is an interactive preprocessing interface for tabular datasets. Instead
 
 ```mermaid
 flowchart TD
-    A[Raw CSV] --> B[File Uploader]
-    B --> C[(Current Dataset Version)]
-    C --> D{Cleaning Step}
-    D -->|Main Menu| E[Dataset Info & Charts]
-    D -->|Nulls| F[Fill / Drop Missing]
-    D -->|Outliers| G[Z-Score or IQR]
-    D -->|Encoding| H[Auto or Manual Map]
-    F --> I[Live Row Diff & Table Preview]
+    A["Raw CSV"] --> B["File Uploader"]
+    B --> C[("Current Dataset<br/>Version")]
+    C --> D{"Cleaning Step"}
+    D -->|Main Menu| E["Dataset Info<br/>& Charts"]
+    D -->|Nulls| F["Fill / Drop<br/>Missing"]
+    D -->|Outliers| G["Z-Score or IQR"]
+    D -->|Encoding| H["Auto or<br/>Manual Map"]
+    F --> I["Live Row Diff<br/>& Preview"]
     G --> I
     H --> I
-    I -->|Apply Changes| J[Update Current Version]
-    J --> C
-```
+    I -->|Apply Changes| J["Update Current<br/>Version"]
+    J --> C```
 
 ## Core Capabilities
 
