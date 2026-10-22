@@ -4,6 +4,8 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![Pandas](https://img.shields.io/badge/pandas-150458?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![NumPy](https://img.shields.io/badge/NumPy-013243?logo=numpy&logoColor=white)](https://numpy.org/)
+[![Matplotlib](https://img.shields.io/badge/Matplotlib-11557C?logo=python&logoColor=white)](https://matplotlib.org/)
+[![Seaborn](https://img.shields.io/badge/Seaborn-4C72B0?logo=python&logoColor=white)](https://seaborn.pydata.org/)
 
 DataLave is an interactive preprocessing interface for tabular datasets. Instead of writing one-off scripts for standard exploratory cleaning, DataLave provides a dedicated UI to audit distributions, impute missing values, filter statistical outliers, and map categorical features with live row-diff feedback before committing changes and more.
 
