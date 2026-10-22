@@ -5,8 +5,21 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib as mpl
 
+
 mpl.rcParams['figure.dpi'] = 300
 mpl.rcParams['savefig.dpi'] = 300
+
+st.set_page_config(page_title="DataLave", layout="wide")
+
+# css load
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+try:
+    load_css("assets/style.css")
+except FileNotFoundError:
+    pass
 
 def clean_data(df,feature,method):
     df1 = df.copy()
