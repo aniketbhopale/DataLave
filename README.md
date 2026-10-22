@@ -82,7 +82,7 @@ flowchart TD
     G1 --> G2[Inspect Frequencies with NaN Count]
     G2 --> G3{Encoding Type}
     G3 -->|Automatic| G4[Assign 0 to n-1 Index]
-    G3 -->|Manual Order| G5[Set Integer in 2-Column Grid]
+    G3 -->|Manual Order| G5[Set Integer Manually]
     G4 --> G6[Apply Changes]
     G5 --> G6
     
