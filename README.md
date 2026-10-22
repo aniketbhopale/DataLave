@@ -11,36 +11,20 @@ DataLave is an interactive preprocessing interface for tabular datasets. Instead
 
 ```mermaid
 flowchart TD
-    A["Upload CSV File"] --> B["Initialize Dataset<br/>Version"]
-    B --> C["Choose Task<br/>from Sidebar"]
-    C --> D["Main Menu"]
-    C --> E["1. Fill & Clean<br/>Nulls"]
-    C --> F["2. Outlier<br/>Management"]
-    C --> G["3. Categorical<br/>Encoding"]
-    
-    D --> D1["Inspect Dataset Info<br/>& Cardinality"]
-    D1 --> D2["Inspect Missing, Spread,<br/>Correlation & Cat Plots"]
-    
-    E --> E1["Select Column<br/>& Strategy"]
-    E1 --> E2["Apply Changes"]
-    
-    F --> F1["Pick Z-score<br/>or IQR"]
-    F1 --> F2["Inspect Live Plot:<br/>Kept vs Outliers"]
-    F2 --> F3["Review Rows Kept<br/>vs Removed"]
-    F3 --> F4["Apply Changes"]
-    
-    G --> G1["Select Categorical<br/>Column"]
-    G1 --> G2["Inspect Frequencies<br/>with NaN Count"]
-    G2 --> G3{"Encoding Type"}
-    G3 -->|Automatic| G4["Assign 0 to n-1<br/>Index"]
-    G3 -->|Manual Order| G5["Set Integer in<br/>2-Column Grid"]
-    G4 --> G6["Apply Changes"]
-    G5 --> G6
-    
-    E2 --> H[("Update Dataset<br/>Version")]
-    F4 --> H
-    G6 --> H
-    H --> I["Re-render Live Shape<br/>& Data Table"]
+    A["Raw CSV"] --> B["File Uploader"]
+    B --> C[("Current Dataset<br/>Version")]
+    C --> D{"Cleaning Step"}
+    D -->|Main Menu| E["Dataset Info<br/>& Charts"]
+    D -->|Nulls| F["Fill / Drop<br/>Missing"]
+    D -->|Outliers| G["Z-Score or IQR"]
+    D -->|Encoding| H["Auto or<br/>Manual Map"]
+    F --> I["Live Row Diff<br/>& Preview"]
+    G --> I
+    H --> I
+    I -->|Apply Changes| J["Update Current<br/>Version"]
+    J --> C
+```
+
 ## Core Capabilities
 
 | Feature | What it handles | Technical details |
