@@ -87,7 +87,7 @@ flowchart TD
 
     E --> E3["Check Email<br/>Formatting"]
     E3 --> E4["Scan for Invalid<br/>Emails<br/>(Using Rules RFC<br/>5321,<br/>5322, 1035, 1123)"]
-    E4 --> E5["Display Rows<br/of<br/>Flagged Emails"]
+    E4 --> E5["Display Rows<br/>of<br/>Flagged Emails"]
 
     F --> F1["Choose Z-Score<br/>or IQR"]
     F1 --> F2["Inspect Live<br/>Distribution: Kept<br/>Rows vs Outliers"]
@@ -105,7 +105,7 @@ flowchart TD
     E2 --> H[("Update Current<br/>Dataset Version")]
     F4 --> H
     G6 --> H
-    H --> I["Re-render Live Shape<br/>and Data Table"]
+    H --> I["Re-render Live<br/>Shape and<br/>Data Table"]
 
 ```
 
