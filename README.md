@@ -65,7 +65,7 @@ DataLave/
 └── README.md            # Architecture specs and setup instructions
 ```
 
-## Interactive Pipeline Workflow
+## Workflow
 
 ```mermaid
 
