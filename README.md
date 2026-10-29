@@ -15,22 +15,22 @@ DataLave is an interactive preprocessing interface for tabular datasets. Instead
 
 flowchart TD
     A["Raw CSV"] --> B["File Uploader"]
-    B --> C[("Current Dataset Version")]
+    B --> C[("Current Dataset<br/>Version")]
     C --> D{"Cleaning Step"}
 
-    D -->|Main Menu| E["Dataset Info and Charts"]
-    D -->|Nulls & Formatting| M1["1. Fill and Clean Nulls"]
-    M1 --> F["Fill or Drop Missing Values"]
-    M1 --> F2["Check Email Formatting"]
-    D -->|Outliers| G["Z-Score or IQR"]
-    D -->|Encoding| H["Automatic or Manual Mapping"]
+    D -->|Main Menu| E["Dataset Info<br/>and Charts"]
+    D -->|Nulls & Formatting| M1["1. Fill and<br/>Clean Nulls"]
+    M1 --> F["Fill or Drop<br/>Missing Values"]
+    M1 --> F2["Check Email<br/>Formatting"]
+    D -->|Outliers| G["Z-Score<br/>or IQR"]
+    D -->|Encoding| H["Automatic or<br/>Manual Mapping"]
 
-    F --> I["Live Row Difference and Preview"]
-    F2 --> I2["Flagged Emails and Their Rows"]
+    F --> I["Live Row Difference<br/>and Preview"]
+    F2 --> I2["Flagged Emails<br/>and Their Rows"]
     G --> I
     H --> I
 
-    I -->|Apply Changes| J["Update Current Version"]
+    I -->|Apply Changes| J["Update Current<br/>Version"]
     J --> C
 
 ```
@@ -71,41 +71,41 @@ DataLave/
 ```mermaid
 
 flowchart TD
-    A["Upload CSV File"] --> B["Initialize Current Dataset Version"]
-    B --> C["Choose Task from Sidebar"]
+    A["Upload CSV File"] --> B["Initialize Current<br/>Dataset Version"]
+    B --> C["Choose Task<br/>from Sidebar"]
 
     C --> D["Main Menu"]
-    C --> E["1. Fill and Clean Nulls"]
-    C --> F["2. Outlier Management"]
-    C --> G["3. Categorical Encoding"]
+    C --> E["1. Fill and<br/>Clean Nulls"]
+    C --> F["2. Outlier<br/>Management"]
+    C --> G["3. Categorical<br/>Encoding"]
 
-    D --> D1["Inspect Dataset Info and Column Cardinality"]
-    D1 --> D2["Inspect Missing Values, Distributions, Correlations and Category Plots"]
+    D --> D1["Inspect Dataset Info<br/>and Column Cardinality"]
+    D1 --> D2["Inspect Missing Values,<br/>Distributions, Correlations<br/>and Category Plots"]
 
-    E --> E1["Select Column and Imputation or Drop Strategy"]
+    E --> E1["Select Column and<br/>Imputation or<br/>Drop Strategy"]
     E1 --> E2["Apply Changes"]
 
-    E --> E3["Check Email Formatting"]
-    E3 --> E4["Scan for Invalid Emails Using Validation Rules"]
-    E4 --> E5["Display Flagged Row Indices and Improper Values"]
+    E --> E3["Check Email<br/>Formatting"]
+    E3 --> E4["Scan for Invalid<br/>Emails Using<br/>Validation Rules"]
+    E4 --> E5["Display Flagged<br/>Row Indices and<br/>Improper Values"]
 
-    F --> F1["Choose Z-Score or IQR"]
-    F1 --> F2["Inspect Live Distribution: Kept Rows vs Outliers"]
-    F2 --> F3["Review Rows Kept vs Removed"]
+    F --> F1["Choose Z-Score<br/>or IQR"]
+    F1 --> F2["Inspect Live<br/>Distribution: Kept<br/>Rows vs Outliers"]
+    F2 --> F3["Review Rows<br/>Kept vs Removed"]
     F3 --> F4["Apply Changes"]
 
-    G --> G1["Select Categorical Column"]
-    G1 --> G2["Inspect Frequencies Including Missing Values"]
+    G --> G1["Select Categorical<br/>Column"]
+    G1 --> G2["Inspect Frequencies<br/>Including Missing<br/>Values"]
     G2 --> G3{"Encoding Type"}
-    G3 -->|Automatic| G4["Assign Integer Indices from 0 to n-1"]
-    G3 -->|Manual Order| G5["Assign Integers Manually"]
+    G3 -->|Automatic| G4["Assign Integer<br/>Indices from<br/>0 to n-1"]
+    G3 -->|Manual Order| G5["Assign Integers<br/>Manually"]
     G4 --> G6["Apply Changes"]
     G5 --> G6
 
-    E2 --> H[("Update Current Dataset Version")]
+    E2 --> H[("Update Current<br/>Dataset Version")]
     F4 --> H
     G6 --> H
-    H --> I["Re-render Live Shape and Data Table"]
+    H --> I["Re-render Live Shape<br/>and Data Table"]
 
 ```
 
