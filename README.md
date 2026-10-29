@@ -86,7 +86,7 @@ flowchart TD
     E1 --> E2["Apply Changes"]
 
     E --> E3["Check Email<br/>Formatting"]
-    E3 --> E4["Scan for Invalid Emails<br/>(Using Rules RFC 5321,<br/>5322, 1035, 1123)"]
+    E3 --> E4["Scan for Invalid<br/>Emails<br/>(Using Rules RFC 5321,<br/>5322, 1035, 1123)"]
     E4 --> E5["Display Flagged<br/>Row Indices and<br/>Improper Values"]
 
     F --> F1["Choose Z-Score<br/>or IQR"]
