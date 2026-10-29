@@ -26,7 +26,8 @@ flowchart TD
     G --> I
     H --> I
     I -->|Apply Changes| J["Update Current<br/>Version"]
-    J --> C```
+    J --> C
+```
 
 ## Core Capabilities
 
@@ -95,7 +96,8 @@ flowchart TD
     E2 --> H[(Update Current Dataset Version)]
     F4 --> H
     G6 --> H
-    H --> I[Re-render Live Shape & Data Table]```
+    H --> I[Re-render Live Shape & Data Table]
+```
 
 ### Transformation Module Breakdown
 
