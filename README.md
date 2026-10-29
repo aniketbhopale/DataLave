@@ -12,21 +12,26 @@ DataLave is an interactive preprocessing interface for tabular datasets. Instead
 ## Data Flow
 
 ```mermaid
+
 flowchart TD
     A["Raw CSV"] --> B["File Uploader"]
-    B --> C[("Current Dataset<br/>Version")]
+    B --> C[("Current Dataset Version")]
     C --> D{"Cleaning Step"}
-    D -->|Main Menu| E["Dataset Info<br/>& Charts"]
-    D -->|Nulls| F["Fill / Drop<br/>Missing"]
-    D -->|Format Check| F2["Check If Emails<br/>are formatted"]
+
+    D -->|Main Menu| E["Dataset Info and Charts"]
+    D -->|Nulls| F["Fill or Drop Missing Values"]
+    D -->|Format Check| F2["Check Email Formatting"]
     D -->|Outliers| G["Z-Score or IQR"]
-    D -->|Encoding| H["Auto or<br/>Manual Map"]
-    F --> I["Live Row Diff<br/>& Preview"]
-    F2 --> I2["Flagged Emails<br>and<be>thier rows]
+    D -->|Encoding| H["Automatic or Manual Mapping"]
+
+    F --> I["Live Row Difference and Preview"]
+    F2 --> I2["Flagged Emails and Their Rows"]
     G --> I
     H --> I
-    I -->|Apply Changes| J["Update Current<br/>Version"]
+
+    I -->|Apply Changes| J["Update Current Version"]
     J --> C
+
 ```
 
 ## Core Capabilities
@@ -63,40 +68,44 @@ DataLave/
 ## Interactive Pipeline Workflow
 
 ```mermaid
+
 flowchart TD
-    A[Upload CSV File] --> B[Initialize Current Dataset Version]
-    B --> C[Choose Task from Sidebar]
-    C --> D[Main Menu]
-    C --> E[1. Fill and Clean Nulls]
-    C --> F[2. Outlier Management]
-    C --> G[3. Categorical Encoding]
-    
-    D --> D1[Inspect Dataset Info & Column Cardinality]
-    D1 --> D2[Inspect Missing Values, Spread, Correlation & Category Plots]
-    
-    E --> E1[Select Column & Imputation / Drop Strategy]
-    E1 --> E2[Apply Changes]
-    E --> E3[Select Column in 'Check If Emails are formatted']
-    E3 --> E4[Scan for Invalid emails (Using rules RFC 5322,5322,1035,1123]
-    E4 --> E5[Display Flagged Row Indices & Improper Values Table]
-    
-    F --> F1[Pick Z-score or IQR]
-    F1 --> F2[Inspect Live Distribution Plot: Kept vs Outliers]
-    F2 --> F3[Review Rows Kept vs Removed]
-    F3 --> F4[Apply Changes]
-    
-    G --> G1[Select Categorical Column]
-    G1 --> G2[Inspect Frequencies with NaN Count]
-    G2 --> G3{Encoding Type}
-    G3 -->|Automatic| G4[Assign 0 to n-1 Index]
-    G3 -->|Manual Order| G5[Set Integer Manually]
-    G4 --> G6[Apply Changes]
+    A["Upload CSV File"] --> B["Initialize Current Dataset Version"]
+    B --> C["Choose Task from Sidebar"]
+
+    C --> D["Main Menu"]
+    C --> E["1. Fill and Clean Nulls"]
+    C --> F["2. Outlier Management"]
+    C --> G["3. Categorical Encoding"]
+    C --> E3["Check Email Formatting"]
+
+    D --> D1["Inspect Dataset Info and Column Cardinality"]
+    D1 --> D2["Inspect Missing Values, Distributions, Correlations and Category Plots"]
+
+    E --> E1["Select Column and Imputation or Drop Strategy"]
+    E1 --> E2["Apply Changes"]
+
+    E3 --> E4["Scan for Invalid Emails Using Validation Rules"]
+    E4 --> E5["Display Flagged Row Indices and Improper Values"]
+
+    F --> F1["Choose Z-Score or IQR"]
+    F1 --> F2["Inspect Live Distribution: Kept Rows vs Outliers"]
+    F2 --> F3["Review Rows Kept vs Removed"]
+    F3 --> F4["Apply Changes"]
+
+    G --> G1["Select Categorical Column"]
+    G1 --> G2["Inspect Frequencies Including Missing Values"]
+    G2 --> G3{"Encoding Type"}
+    G3 -->|Automatic| G4["Assign Integer Indices from 0 to n-1"]
+    G3 -->|Manual Order| G5["Assign Integers Manually"]
+    G4 --> G6["Apply Changes"]
     G5 --> G6
-    
-    E2 --> H[(Update Current Dataset Version)]
+
+    E2 --> H[("Update Current Dataset Version")]
     F4 --> H
     G6 --> H
-    H --> I[Re-render Live Shape & Data Table]
+    H --> I["Re-render Live Shape and Data Table"]
+
 ```
 
 ### Transformation Module Breakdown
