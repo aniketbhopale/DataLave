@@ -18,11 +18,11 @@ flowchart TD
     C --> D{"Cleaning Step"}
     D -->|Main Menu| E["Dataset Info<br/>& Charts"]
     D -->|Nulls| F["Fill / Drop<br/>Missing"]
-    D -->|Nulls| F2["Check If Emails<br/>are formatted"]
+    D -->|Format Check| F2["Check If Emails<br/>are formatted"]
     D -->|Outliers| G["Z-Score or IQR"]
     D -->|Encoding| H["Auto or<br/>Manual Map"]
     F --> I["Live Row Diff<br/>& Preview"]
-    F2 --> I2["Flagged Row Indices<br/>& Improper Values"]
+    F2 --> I2["Flagged Emails<br>and<be>thier rows]
     G --> I
     H --> I
     I -->|Apply Changes| J["Update Current<br/>Version"]
@@ -77,7 +77,7 @@ flowchart TD
     E --> E1[Select Column & Imputation / Drop Strategy]
     E1 --> E2[Apply Changes]
     E --> E3[Select Column in 'Check If Emails are formatted']
-    E3 --> E4[Run RFC Regex Audit on Raw Whitespace]
+    E3 --> E4[Scan for Invalid emails (Using rules RFC 5322,5322,1035,1123]
     E4 --> E5[Display Flagged Row Indices & Improper Values Table]
     
     F --> F1[Pick Z-score or IQR]
