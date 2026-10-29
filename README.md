@@ -21,7 +21,7 @@ flowchart TD
     D -->|Main Menu| E["Dataset Info<br/>and Charts"]
     D -->|Nulls & Formatting| M1["1. Fill and<br/>Clean Nulls"]
     M1 --> F["Fill or Drop<br/>Missing Values"]
-    M1 --> F2["Check Email<br/>Formatting"]
+    M1 --> F2["Checks Email<br/>Formatting"]
     D -->|Outliers| G["Z-Score<br/>or IQR"]
     D -->|Encoding| H["Automatic or<br/>Manual Mapping"]
 
@@ -87,7 +87,7 @@ flowchart TD
 
     E --> E3["Check Email<br/>Formatting"]
     E3 --> E4["Scan for Invalid<br/>Emails<br/>(Using Rules RFC<br/>5321,<br/>5322, 1035, 1123)"]
-    E4 --> E5["Display Flagged<br/>Row Indices and<br/>Improper Values"]
+    E4 --> E5["Display Flagged<br/>Row Indices and<br/>Improper Emails"]
 
     F --> F1["Choose Z-Score<br/>or IQR"]
     F1 --> F2["Inspect Live<br/>Distribution: Kept<br/>Rows vs Outliers"]
