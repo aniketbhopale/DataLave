@@ -4,24 +4,20 @@ import streamlit as st
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib as mpl
-import validation
 
 mpl.rcParams['figure.dpi'] = 300
 mpl.rcParams['savefig.dpi'] = 300
 
 st.set_page_config(page_title="DataLave", layout="wide")
 
-
 def load_css(file_name):
     with open(file_name) as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
 
 try:
     load_css("assets/style.css")
 except FileNotFoundError:
     pass
-
 
 def clean_data(df, feature, method):
     df1 = df.copy()
@@ -41,7 +37,6 @@ def clean_data(df, feature, method):
         if pd.notna(val):
             df1[feature] = df1[feature].fillna(val)
     return df1
-
 
 def Outliers(df, feature, methods1, submethods1, k):
     df2 = df.copy()
@@ -73,7 +68,6 @@ def Outliers(df, feature, methods1, submethods1, k):
         df2 = df2[df2[feature].between(min_range, max_range) | df2[feature].isna()]
 
     return df2
-
 
 def plot_outlier_distribution(df, feature, is_outlier_mask=None, is_preview=True):
     fig, (ax_box, ax_hist) = plt.subplots(
@@ -126,12 +120,10 @@ def plot_outlier_distribution(df, feature, is_outlier_mask=None, is_preview=True
     plt.tight_layout()
     return fig
 
-
 def Encode(df, feature, mapping_dict):
     df3 = df.copy()
     df3[feature] = df3[feature].map(mapping_dict)
     return df3
-
 
 st.title("DataLave")
 
@@ -139,8 +131,6 @@ if 'df' not in st.session_state:
     st.session_state.df = None
 if 'loaded_filename' not in st.session_state:
     st.session_state.loaded_filename = None
-if 'ignore_schema_warnings' not in st.session_state:
-    st.session_state.ignore_schema_warnings = False
 
 st.sidebar.subheader('Select Work to perform')
 work = st.sidebar.radio('Select Work to perform',
@@ -161,24 +151,12 @@ if file is not None:
             file.seek(0)
             st.session_state.df = pd.read_csv(file, encoding='latin-1')
         st.session_state.loaded_filename = file.name
-        st.session_state.ignore_schema_warnings = False
 
 if work == 'Main Menu':
     if st.session_state.df is None:
         st.info("Please upload a CSV file.")
     else:
         current_df = st.session_state.df
-
-        if not st.session_state.ignore_schema_warnings:
-            schema = validation.build_schema_from_df(current_df)
-            is_valid, failures = validation.validate_df(current_df, schema)
-
-            if not is_valid and failures is not None:
-                st.error(f"Found {len(failures)} data quality issues")
-                st.dataframe(failures, use_container_width=True)
-                if st.checkbox("Ignore / Don't remind again for this dataset", key="ignore_warnings_checkbox"):
-                    st.session_state.ignore_schema_warnings = True
-                    st.rerun()
 
         total_rows, total_cols = current_df.shape
         total_cells = total_rows * total_cols
@@ -317,16 +295,9 @@ if work == '1.Fill and Clean Nulls':
 
         method = st.selectbox('Select your method', valid_methods)
 
-        if st.button('Apply Changes'):
+        if st.button('Apply Changes', key='btn_apply_nulls'):
             st.session_state.df = clean_data(st.session_state.df, feature, method)
             st.success('Your changes have been saved.')
-
-            if not st.session_state.ignore_schema_warnings:
-                schema = validation.build_schema_from_df(st.session_state.df)
-                is_valid, failures = validation.validate_df(st.session_state.df, schema)
-                if not is_valid and failures is not None:
-                    st.warning(f"Post-cleaning validation: {len(failures)} issues found")
-                    st.dataframe(failures, use_container_width=True)
 
         st.caption('Current Dataset:')
         st.dataframe(st.session_state.df, use_container_width=True)
@@ -334,39 +305,67 @@ if work == '1.Fill and Clean Nulls':
 
         st.markdown("---")
 
-        # Check If Emails are formatted (placed below the dataset display)
-        st.subheader("Check If Emails are formatted")
-        email_col = st.selectbox(
-            'Select Column having Emails reocrds to Check Email If in format',
+        st.header("Email Check")
+
+        st.subheader("1. Strip ' ' space before and after email")
+        st.caption(
+            "Examples: `'   john22@gmail.com'` -> `'john22@gmail.com'` | `'jay33@gmail.com   '` -> `'jay33@gmail.com'`")
+
+        col_strip_target = st.selectbox(
+            'Select Column having Emails to remove spacing:',
             st.session_state.df.columns,
+            index=st.session_state.df.columns.get_loc('email') if 'email' in st.session_state.df.columns else 0,
+            key='strip_email_col_select'
+        )
+
+        strip_series = st.session_state.df[col_strip_target].dropna().astype(str)
+        cleaned_series = strip_series.str.strip()
+        num_spaced = int((strip_series != cleaned_series).sum())
+
+        if st.button('Remove before and after space of address', key='btn_detect_spaces'):
+            st.session_state.pending_strip_col = col_strip_target
+
+        if st.session_state.get('pending_strip_col') == col_strip_target:
+            if num_spaced > 0:
+                st.success(f"Found {num_spaced:,} record(s) with leading/trailing spaces in '{col_strip_target}'.")
+                if st.button('Apply Changes', key='btn_commit_strip'):
+                    st.session_state.df[col_strip_target] = st.session_state.df[col_strip_target].astype(
+                        str).str.strip()
+                    del st.session_state['pending_strip_col']
+                    st.rerun()
+            else:
+                st.info(f"No leading or trailing spaces found in '{col_strip_target}'.")
+
+        st.markdown("---")
+
+        st.subheader("2. Check Email Format")
+        col_format_target = st.selectbox(
+            'Select Column having Emails records to Check Email If in format',
+            st.session_state.df.columns,
+            index=st.session_state.df.columns.get_loc('email') if 'email' in st.session_state.df.columns else 0,
             key='email_inspector_select'
         )
 
-        col_series = st.session_state.df[email_col]
-        non_null_series = col_series.dropna()
+        raw_inspect_series = st.session_state.df[col_format_target].dropna().astype(str)
+        missing_tokens = {'', 'nan', 'none', 'null', 'na', 'n/a', '<na>'}
+        valid_text_entries = raw_inspect_series[~raw_inspect_series.str.strip().str.lower().isin(missing_tokens)]
 
-        if non_null_series.empty:
-            st.info("The selected column has no non-empty values to inspect.")
+        if valid_text_entries.empty:
+            st.info("No non-empty text entries found to check.")
         else:
-            raw_str_series = non_null_series.astype(str)
-            missing_tokens = {'', 'nan', 'none', 'null', 'na', 'n/a', '<na>'}
-            active_entries = raw_str_series[~raw_str_series.str.strip().str.lower().isin(missing_tokens)]
+            email_regex = r'^(?!\.)(?!.*\.\.)[a-zA-Z0-9._%+-]+(?<!\.)@(?!\.)(?!.*\.\.)[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            invalid_mask = ~valid_text_entries.str.match(email_regex, na=False)
+            invalid_entries = valid_text_entries[invalid_mask]
 
-            if active_entries.empty:
-                st.info("No text entries found to check.")
+            if not invalid_entries.empty:
+                st.warning(f"Found {len(invalid_entries):,} non-standard or improper email values:")
+                improper_df = pd.DataFrame({
+                    "Row Number (Dataset Index)": invalid_entries.index,
+                    "Improper Email Value": invalid_entries.values
+                })
+                st.dataframe(improper_df, use_container_width=True)
             else:
-                invalid_mask = ~active_entries.str.match(validation.EMAIL_REGEX, na=False)
-                invalid_entries = active_entries[invalid_mask]
-
-                if not invalid_entries.empty:
-                    st.warning(f"Found {len(invalid_entries):,} non-standard or improper email values:")
-                    improper_df = pd.DataFrame({
-                        "Row Number (Dataset Index)": invalid_entries.index,
-                        "Improper Email Value": invalid_entries.values
-                    })
-                    st.dataframe(improper_df, use_container_width=True)
-                else:
-                    st.info("All inspected values match standard email formatting.")
+                st.info("All inspected values match standard email formatting.")
     else:
         st.info("Please upload a CSV file.")
 
@@ -446,13 +445,6 @@ elif work == '2.Outlier Management':
                 filtered_df = st.session_state.df[~outlier_mask].copy()
                 st.session_state.df = filtered_df
                 st.success('Outliers successfully filtered.')
-
-                if not st.session_state.ignore_schema_warnings:
-                    schema = validation.build_schema_from_df(st.session_state.df)
-                    is_valid, failures = validation.validate_df(st.session_state.df, schema)
-                    if not is_valid and failures is not None:
-                        st.warning(f"Post-cleaning validation: {len(failures)} issues found")
-                        st.dataframe(failures, use_container_width=True)
                 st.rerun()
 
             st.markdown("---")
