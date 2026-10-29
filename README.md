@@ -18,14 +18,15 @@ flowchart TD
     C --> D{"Cleaning Step"}
     D -->|Main Menu| E["Dataset Info<br/>& Charts"]
     D -->|Nulls| F["Fill / Drop<br/>Missing"]
+    D -->|Nulls| F2["Check If Emails<br/>are formatted"]
     D -->|Outliers| G["Z-Score or IQR"]
     D -->|Encoding| H["Auto or<br/>Manual Map"]
     F --> I["Live Row Diff<br/>& Preview"]
+    F2 --> I2["Flagged Row Indices<br/>& Improper Values"]
     G --> I
     H --> I
     I -->|Apply Changes| J["Update Current<br/>Version"]
-    J --> C
-```
+    J --> C```
 
 ## Core Capabilities
 
@@ -72,8 +73,11 @@ flowchart TD
     D --> D1[Inspect Dataset Info & Column Cardinality]
     D1 --> D2[Inspect Missing Values, Spread, Correlation & Category Plots]
     
-    E --> E1[Select Column & Strategy]
+    E --> E1[Select Column & Imputation / Drop Strategy]
     E1 --> E2[Apply Changes]
+    E --> E3[Select Column in 'Check If Emails are formatted']
+    E3 --> E4[Run RFC Regex Audit on Raw Whitespace]
+    E4 --> E5[Display Flagged Row Indices & Improper Values Table]
     
     F --> F1[Pick Z-score or IQR]
     F1 --> F2[Inspect Live Distribution Plot: Kept vs Outliers]
@@ -91,8 +95,7 @@ flowchart TD
     E2 --> H[(Update Current Dataset Version)]
     F4 --> H
     G6 --> H
-    H --> I[Re-render Live Shape & Data Table]
-```
+    H --> I[Re-render Live Shape & Data Table]```
 
 ### Transformation Module Breakdown
 
